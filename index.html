@@ -44,6 +44,10 @@
           <section class="form-section">
             <h2>顾客资料</h2>
             <label>
+              Record No. / 记录单号码
+              <input id="recordNo" name="recordNo" readonly />
+            </label>
+            <label>
               Customer Name
               <input id="customerName" name="customerName" autocomplete="name" required />
             </label>
@@ -61,15 +65,21 @@
                 <input id="carPlate" name="carPlate" autocapitalize="characters" required />
               </label>
               <label>
-                Model
-                <input id="carModel" name="carModel" placeholder="e.g. Civic FC" />
+                Brand / Make
+                <input id="vehicleBrand" name="vehicleBrand" placeholder="e.g. Toyota" required />
               </label>
             </div>
             <div class="field-row">
               <label>
+                Model
+                <input id="carModel" name="carModel" placeholder="e.g. Civic FC" />
+              </label>
+              <label>
                 Current Mileage
                 <input id="currentMileage" name="currentMileage" type="number" min="0" inputmode="numeric" required />
               </label>
+            </div>
+            <div class="field-row">
               <label>
                 Service Date
                 <input id="serviceDate" name="serviceDate" type="date" required />

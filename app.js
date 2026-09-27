@@ -29,6 +29,7 @@ let selectedId = records[0]?.id ?? null;
 
 const today = new Date().toISOString().slice(0, 10);
 document.querySelector("#serviceDate").value = today;
+document.querySelector("#recordNo").value = generateRecordNo();
 
 function loadRecords() {
   try {
@@ -80,13 +81,21 @@ function createId() {
   return `record-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+function generateRecordNo() {
+  const datePart = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+  const sameDayCount = records.filter((record) => record.recordNo?.includes(datePart)).length + 1;
+  return `WDBF-${datePart}-${String(sameDayCount).padStart(3, "0")}`;
+}
+
 function getFormRecord() {
   const next = calculateNext();
   return {
     id: createId(),
+    recordNo: document.querySelector("#recordNo").value.trim() || generateRecordNo(),
     customerName: document.querySelector("#customerName").value.trim(),
     whatsapp: document.querySelector("#whatsapp").value.trim(),
     carPlate: document.querySelector("#carPlate").value.trim().toUpperCase(),
+    vehicleBrand: document.querySelector("#vehicleBrand").value.trim(),
     carModel: document.querySelector("#carModel").value.trim(),
     currentMileage: Number(document.querySelector("#currentMileage").value || 0),
     serviceDate: document.querySelector("#serviceDate").value,
@@ -116,7 +125,7 @@ function renderDashboard() {
 function renderHistory() {
   const query = els.searchInput.value.trim().toLowerCase();
   const visible = records.filter((record) => {
-    const haystack = `${record.customerName} ${record.carPlate} ${record.carModel}`.toLowerCase();
+    const haystack = `${record.recordNo} ${record.customerName} ${record.carPlate} ${record.vehicleBrand} ${record.carModel}`.toLowerCase();
     return haystack.includes(query);
   });
 
@@ -130,8 +139,8 @@ function renderHistory() {
     const item = els.historyTemplate.content.firstElementChild.cloneNode(true);
     const main = item.querySelector(".history-main");
     main.innerHTML = `
-      <strong>${record.carPlate} · ${record.customerName}</strong>
-      <span>${record.carModel || "Vehicle model not set"} · ${formatDate(record.serviceDate)} · Next ${formatDate(record.nextDate)}</span>
+      <strong>${record.recordNo || "No record no."} · ${record.carPlate} · ${record.customerName}</strong>
+      <span>${record.vehicleBrand || "Brand not set"} ${record.carModel || ""} · ${formatDate(record.serviceDate)} · Next ${formatDate(record.nextDate)}</span>
     `;
     main.addEventListener("click", () => {
       selectedId = record.id;
@@ -155,6 +164,7 @@ function renderCard() {
     ["Customer", record.customerName],
     ["WhatsApp", record.whatsapp || "-"],
     ["Car Plate", record.carPlate],
+    ["Brand", record.vehicleBrand || "-"],
     ["Vehicle", record.carModel || "-"],
     ["Service Date", formatDate(record.serviceDate)],
     ["Brake Fluid", record.fluidType],
@@ -193,6 +203,7 @@ function saveCurrentRecord() {
   document.querySelector("#fluidType").value = "DOT 4";
   document.querySelector("#intervalMonths").value = "24";
   document.querySelector("#mileageInterval").value = "40000";
+  document.querySelector("#recordNo").value = generateRecordNo();
   calculateNext();
   renderAll();
   setView("card");
@@ -205,7 +216,7 @@ function shareSelected() {
   const message = [
     "WEIDE LUXURY Brake Service Record",
     `Customer: ${record.customerName}`,
-    `Vehicle: ${record.carPlate}${record.carModel ? ` (${record.carModel})` : ""}`,
+    `Vehicle: ${record.carPlate}${record.vehicleBrand ? ` · ${record.vehicleBrand}` : ""}${record.carModel ? ` ${record.carModel}` : ""}`,
     `Brake Fluid / Oil: ${record.fluidType}`,
     `Service Date: ${formatDate(record.serviceDate)}`,
     `Mileage: ${formatMileage(record.currentMileage)}`,

@@ -6,7 +6,9 @@ Mobile-first web app for recording Brake Fluid / Brake Oil service records at WE
 
 - Dashboard summary
 - New service record form
+- Internal Record No. for workshop lookup
 - Customer and vehicle details
+- Vehicle Brand / Make field
 - Brake Fluid / Brake Oil replacement record
 - Automatic next change date calculation
 - Automatic next mileage calculation
