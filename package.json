@@ -1,0 +1,11 @@
+{
+  "name": "weide-brake-fluid-service-record",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/service-core.test.cjs",
+    "test:browser": "node tests/browser.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.64.0"
+  }
+}
