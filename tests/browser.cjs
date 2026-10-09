@@ -27,6 +27,7 @@ async function run() {
   const url = `http://127.0.0.1:${server.address().port}/`;
   const profiles = [{name:'desktop', width:1440,height:900}, {name:'phone',width:360,height:800}, {name:'ipad',width:820,height:1180}];
   for (const profile of profiles) {
+    console.log(`START ${profile.name}`);
     const engine = profile.name === 'ipad' && !process.env.CHROMIUM_EXECUTABLE ? webkit : chromium;
     const browser = await engine.launch(process.env.CHROMIUM_EXECUTABLE ? {executablePath:process.env.CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']} : {});
     try {
@@ -64,7 +65,7 @@ async function run() {
       assert.equal(await page.locator('#cardView').isVisible(),true);
       assert.equal(await page.locator('#formView').isVisible(),false);
       await page.emulateMedia({media:'screen'});
-      await page.evaluate(()=>navigator.serviceWorker.ready);
+      await page.waitForFunction(async () => !!(await navigator.serviceWorker.getRegistration())?.active);
       await page.reload();
       await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
       await context.setOffline(true);await page.reload();
