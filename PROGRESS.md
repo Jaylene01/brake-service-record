@@ -26,7 +26,7 @@
 - Corrected month-end/leap-year calculation and local date handling; record numbering uses maximum suffix.
 - Kept PWA standalone installation and offline shell. Unified title/manifest/home-screen name as Brake Fluid Service Record. Added 192px/512px PNG exports of existing SVG; exact approved Performance Style asset still pending.
 - Local tests: four core tests pass in UTC and Asia/Kuala_Lumpur. Desktop, phone and iPad viewport simulations in Chromium pass save/reload, original history, calculations, WhatsApp draft URL, search, card content escaping, warranty-data isolation, no horizontal overflow, print view, offline reload, manifest/assets and corrupt storage protection.
-- GitHub Actions adds Chromium desktop/phone and WebKit iPad viewport tests; actual-device installation, final icon and WhatsApp handoff remain deployment checks.
+- GitHub Actions confirms Chromium desktop/phone tests pass. Initial WebKit run passed core flows through print but stopped at unsupported service-worker automation. Offline testing is restricted to Chromium per Playwright documentation; the WebKit core flow rerun is required. Actual iPad offline/PWA installation, final icon and WhatsApp handoff remain deployment checks.
 - Modified only `Jaylene01/brake-service-record`. No changes to `BRAKE-FLUID-SERVICE-REMINDER`, separate Warranty Card systems, Railway settings, production deployments or production/customer history.
 
 **Current status:** Repair prepared on `fix/restore-brake-fluid-record`; main/production not updated. Previous production checklist above remains gated by the README deployment steps. Do not merge into an auto-deployed main branch before production approval and backups.

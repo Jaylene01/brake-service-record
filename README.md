@@ -37,7 +37,7 @@ npx playwright install --with-deps chromium webkit
 npm run test:browser
 ```
 
-Browser tests start their own temporary localhost static server and use simulation-only records. They cover desktop (1440×900 Chromium), phone (360×800 Chromium), iPad size (820×1180 WebKit), save/reload, existing history, date/mileage, search, escaped card content, WhatsApp URL, warranty storage isolation, responsive width, print visibility, offline reload, manifest/icons and corrupt-data protection. The optional `CHROMIUM_EXECUTABLE` override runs all profiles in Chromium when WebKit is unavailable. These simulations do not replace physical-device home-screen installation and WhatsApp handoff tests. No tests connect to Railway or send messages.
+Browser tests start their own temporary localhost static server and use simulation-only records. They cover desktop (1440×900 Chromium), phone (360×800 Chromium), iPad size (820×1180 WebKit), save/reload, existing history, date/mileage, search, escaped card content, WhatsApp URL, warranty storage isolation, responsive width, print visibility, Chromium offline reload, manifest/icons and corrupt-data protection. Playwright service-worker automation is Chromium-only (https://playwright.dev/docs/service-workers); WebKit tests cover the core app flows, with physical iPad offline/installation checks still pending. The optional `CHROMIUM_EXECUTABLE` override runs all profiles in Chromium when WebKit is unavailable. These simulations do not replace physical-device home-screen installation and WhatsApp handoff tests. No tests connect to Railway or send messages.
 
 ## Deployment gate
 

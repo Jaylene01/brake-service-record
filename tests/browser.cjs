@@ -32,6 +32,8 @@ async function run() {
     const browser = await engine.launch(process.env.CHROMIUM_EXECUTABLE ? {executablePath:process.env.CHROMIUM_EXECUTABLE,args:['--no-sandbox','--disable-dev-shm-usage']} : {});
     try {
       const context = await browser.newContext({viewport:{width:profile.width,height:profile.height},timezoneId:'Asia/Kuala_Lumpur',hasTouch:profile.name!=='desktop',isMobile:profile.name!=='desktop'});
+      context.setDefaultTimeout(15000);
+      context.setDefaultNavigationTimeout(15000);
       const page = await context.newPage();
       const errors=[];page.on('pageerror', error=>errors.push(error.message));
       await page.goto(url);
@@ -65,12 +67,19 @@ async function run() {
       assert.equal(await page.locator('#cardView').isVisible(),true);
       assert.equal(await page.locator('#formView').isVisible(),false);
       await page.emulateMedia({media:'screen'});
-      await page.waitForFunction(async () => !!(await navigator.serviceWorker.getRegistration())?.active);
-      await page.reload();
-      await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
-      await context.setOffline(true);await page.reload();
-      assert.equal(await page.locator('#totalRecords').textContent(),'2');
-      await context.setOffline(false);
+      if (engine === chromium) {
+        console.log(`${profile.name}: verify offline service worker`);
+        await page.waitForFunction(async () => !!(await navigator.serviceWorker.getRegistration())?.active);
+        await page.reload();
+        await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
+        await context.setOffline(true);await page.reload();
+        assert.equal(await page.locator('#totalRecords').textContent(),'2');
+        await context.setOffline(false);
+      } else {
+        // Playwright documents service-worker automation as Chromium-only.
+        // Keep WebKit core flows enabled; physical iPad offline testing is pending.
+        console.log('PENDING physical iPad offline/PWA installation (Playwright service-worker automation is Chromium-only)');
+      }
       const manifest = await (await context.request.get(url+'manifest.webmanifest')).json();
       assert.equal(manifest.display,'standalone');assert.match(manifest.name,/Brake Fluid/);
       for(const icon of manifest.icons)assert.equal((await context.request.get(url+icon.src.replace('./',''))).status(),200);
@@ -98,7 +107,7 @@ async function run() {
       assert.match(await page.locator('#message').textContent(),/保存失败/);
       assert.equal(await page.locator('#currentMileage').inputValue(),'12500');
       assert.deepEqual(errors,[]);
-      console.log(`PASS ${profile.name} (${engine === webkit ? 'WebKit' : 'Chromium'}): legacy history, save/reload, next date/mileage, safe card, search, WhatsApp URL, warranty isolation, responsive width, print, offline shell, PWA assets, corrupt storage protection`);
+      console.log(`PASS ${profile.name} (${engine === webkit ? 'WebKit' : 'Chromium'}): legacy history, save/reload, next date/mileage, safe card, search, WhatsApp URL, warranty isolation, responsive width, print, ${engine === chromium ? 'offline shell' : 'offline pending on physical device'}, PWA assets, backup and storage failure protection`);
       await context.close();
     } finally {await browser.close();}
   }
